@@ -56,6 +56,26 @@ class Map extends React.Component {
       //   var features = map.queryRenderedFeatures(e.point, { layers: ['point'] });
       //   map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
       // })
+      var popup = new mapboxgl.Popup({
+           closeButton: false,
+           closeOnClick: false
+       });
+      map.on('mouseenter', 'point', function(e) {
+          // Change the cursor style as a UI indicator.
+          map.getCanvas().style.cursor = 'pointer';
+
+          // Populate the popup and set its coordinates
+          // based on the feature found.
+          popup.setLngLat(e.features[0].geometry.coordinates)
+              .setHTML(`${e.features[0].properties.k} \n${e.features[0].properties.d}` )
+              .addTo(map);
+      });
+
+      map.on('mouseleave', 'point', function() {
+          map.getCanvas().style.cursor = '';
+          popup.remove();
+      });
+  // });
 
       map.addControl(new mapboxgl.NavigationControl());
       map.addControl(new mapboxgl.GeolocateControl({  positionOptions: {   enableHighAccuracy: true }}))
@@ -185,7 +205,7 @@ function point_layer_obj(){
     id: 'point',
     type: 'symbol',
     source: 'data',
-    "paint":{"icon-opacity": .75,},
+    "paint":{"icon-opacity": .65,},
     "layout": {
       "icon-image": "skull_d2_image",
       "icon-allow-overlap": true,

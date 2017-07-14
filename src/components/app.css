@@ -50,16 +50,18 @@ p.small {
   font-family: monospace;
 }
 a {
-  color: rgb(20,40,200);
+  /*color: rgb(20,40,200);*/
   text-decoration: none;
-  padding: 2px;
+  /*padding: 2px;*/
   font-weight: bold
 }
 a:visited {
+  /*color: rgb(20,40,200);*/
   color: rgb(20,40,200);
+
 }
 a:hover {
-  background-color: rgba(20,200,150,0.3);
+  /*background-color: rgba(20,200,150,0.3);*/
   color: rgb(20,40,200);
 }
 
