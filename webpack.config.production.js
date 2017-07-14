@@ -40,7 +40,7 @@ module.exports = {
           inject: 'body',
           filename: 'index.html'
     }),
-    // new ModulesCdnWebpackPlugin({verbose:true, only: ['react', 'mapbox-gl', 'react-dom', 'react-ga']}),
+    new ModulesCdnWebpackPlugin({verbose:true, only: ['react', 'mapbox-gl', 'react-dom', 'react-ga']}),
     // new webpack.optimize.UglifyJsPlugin({
     //   sourceMap: true,
     //   comments: false

@@ -223,7 +223,10 @@ function toner_layer_style(){
                 "tiles": [
                     // "http://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
                     // "http://b.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    "http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png"
+                    // "http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png"
+                    // "http://tile.stamen.com/toner-lite/{z}/{x}/{y}.png"
+                    // "//tile.stamen.com/toner-lite/{z}/{x}/{y}.png",
+                    "//stamen-tiles-b.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png"
                 ],
                 "tileSize": 256
             }
