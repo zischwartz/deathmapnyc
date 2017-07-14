@@ -27,7 +27,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
 
     // publicPath: '/static/'
-    publicPath: '/'
+    // publicPath: '/'
     // necessary for HMR to know where to load the hot update chunks
   },
 

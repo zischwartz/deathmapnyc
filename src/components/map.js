@@ -50,12 +50,6 @@ class Map extends React.Component {
       image.src = skull_url
       map.addImage('skull_d2_image', image, {width: 40, height: 53});
       map.addLayer(point_layer_obj())
-      // map.addLayer(make_border_layer())
-      // works, but probs better to apply to layer/symbols
-      // map.on('mousemove', function(e) {
-      //   var features = map.queryRenderedFeatures(e.point, { layers: ['point'] });
-      //   map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
-      // })
       var popup = new mapboxgl.Popup({
            closeButton: false,
            closeOnClick: false
@@ -66,8 +60,9 @@ class Map extends React.Component {
 
           // Populate the popup and set its coordinates
           // based on the feature found.
+          let d = e.features[0].properties.d
           popup.setLngLat(e.features[0].geometry.coordinates)
-              .setHTML(`${e.features[0].properties.k} \n${e.features[0].properties.d}` )
+              .setHTML(new Date(d).toDateString() )
               .addTo(map);
       });
 
