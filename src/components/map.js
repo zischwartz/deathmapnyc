@@ -78,7 +78,7 @@ class Map extends React.Component {
     })
   }
   render() {
-    console.log(this.get_active_kinds())
+    // console.log(this.get_active_kinds())
     // let kinds =
     // ["in", "k", ].concat(kinds)
     if (this.mb_map){

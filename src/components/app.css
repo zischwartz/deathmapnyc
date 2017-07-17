@@ -18,24 +18,19 @@ body {
   position: absolute;
   bottom: 0px;
   left: 0px;
-  padding: 10px 10px 0 10px;
+  /*padding: 10px 10px 0 10px;*/
+  /* nowrap for title below causes the 30px padding on the right*/
+  padding: 10px 30px 0 10px;
   background-color: rgba(255, 255, 255, 0.5);
-  max-width: 425px;
+  /*max-width: 425px;*/
   font-size: 0.85em;
+
+  /*width: 60vw;*/
   /*pointer-events: none;*/
 }
 
-
-#info a.close{
-  color: black !important;
-  position: absolute;
-  padding: 5px;
-  top: 0px;
-  right:0px;
-  /*display: block;*/
-}
-
 #info div.title {
+  white-space: nowrap;
   margin-bottom: -5px;
 }
 
@@ -50,19 +45,16 @@ p.small {
   font-family: monospace;
 }
 a {
-  /*color: rgb(20,40,200);*/
+  color: rgb(45,40,200);
   text-decoration: none;
-  /*padding: 2px;*/
   font-weight: bold
 }
 a:visited {
-  /*color: rgb(20,40,200);*/
-  color: rgb(20,40,200);
+  color: rgb(45,40,200);
 
 }
 a:hover {
-  /*background-color: rgba(20,200,150,0.3);*/
-  color: rgb(20,40,200);
+  color: rgb(45,40,200);
 }
 
 
@@ -78,7 +70,9 @@ from https://www.mapbox.com/mapbox-gl-js/example/filter-markers/
     right: 10px;
     z-index: 1;
     border-radius: 3px;
-    width: 120px;
+    /*width: 120px;*/
+    max-width: 100px;
+
     color: #fff;
 }
 
@@ -100,7 +94,8 @@ from https://www.mapbox.com/mapbox-gl-js/example/filter-markers/
     background-color: rgb(40,40,40);
     display: block;
     cursor: pointer;
-    padding: 10px;
+    /*padding: 10px;*/
+    padding: 6px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 

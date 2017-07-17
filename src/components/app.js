@@ -12,20 +12,18 @@ let skull_url = require("../../img/skull_d2.png")
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {show_info: true}
+    this.state = {show_moreinfo: false}
   }
   componentDidMount(){
 
   }
   render(){
-    let info_style = this.state.show_info ? {display:"block"} : {display:"none"}
+    let info_style = {display:"block"} //this.state.show_moreinfo ? {display:"block"} : {display:"none"}
     return <div id="app">
       <div id="info" style={info_style}>
         <img src={skull_url} style={ {'float':'left', marginTop:-5, width: 20, height:27} }/>
-        <a className='close' href="#" onClick={()=> this.setState({show_info:false})}>X</a>
         <div className='title'><strong>Death in New York City</strong></div>
-        <p>Lorem ipsum dolor sit amet, </p>
-        <p>By <a href="https://twitter.com/zischwartz">Zach Schwartz</a> | <a href="https://github.com/zischwartz/womensmarches">Source Code</a></p>
+        <p><a className='moreinfo' href="#" onClick={()=> this.setState({show_moreinfo:false})}>More info</a></p>
       </div>
       <Map/>
     </div>
@@ -33,5 +31,5 @@ class App extends React.Component {
 }
 
 // consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
+//         <p>Lorem ipsum dolor sit amet, </p> <p>By <a href="https://twitter.com/zischwartz">Zach Schwartz</a> | <a href="https://github.com/zischwartz/womensmarches">Source Code</a></p>
 export default App;
