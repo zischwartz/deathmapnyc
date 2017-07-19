@@ -43,8 +43,7 @@ class Map extends React.Component {
       this.mb_map = map
       map.addSource('data', {
         type: 'geojson',
-        data: geojson,
-        // cluster: true, // https://www.mapbox.com/mapbox-gl-js/example/cluster/ // clusterRadius: 25 // default is 50
+        data: geojson, // cluster: true, // https://www.mapbox.com/mapbox-gl-js/example/cluster/ // clusterRadius: 25 // default is 50
       })
       let image = new Image(40,53)
       image.src = skull_url
@@ -53,16 +52,17 @@ class Map extends React.Component {
       var popup = new mapboxgl.Popup({
            closeButton: false,
            closeOnClick: false
-       });
+      })
       map.on('mouseenter', 'point', function(e) {
           // Change the cursor style as a UI indicator.
           map.getCanvas().style.cursor = 'pointer';
-
           // Populate the popup and set its coordinates
           // based on the feature found.
-          let d = e.features[0].properties.d
+          let p = e.features[0].properties
+          // console.log(p)
+          // console.log(d)
           popup.setLngLat(e.features[0].geometry.coordinates)
-              .setHTML(new Date(d).toDateString() )
+              .setHTML(new Date(p['date']).toDateString() + (p['description'] ? '<br/>'+p['description']: '') )
               .addTo(map);
       });
 
@@ -82,7 +82,7 @@ class Map extends React.Component {
     // let kinds =
     // ["in", "k", ].concat(kinds)
     if (this.mb_map){
-      this.mb_map.setFilter('point', ['in', 'k'].concat(this.get_active_kinds()) )
+      this.mb_map.setFilter('point', ['in', 'kind'].concat(this.get_active_kinds()) )
     }
 
     return (<div>
@@ -102,11 +102,15 @@ export default Map;
 // Helpers !
 // -------------------
 
+// should pass data in too.
+
 function load_data(map) {
   let counts = {}
   return new Promise(function(resolve, reject){
         require.ensure([], function() {
-          let records = require("../../data/deaths.json")
+          let records = require('dsv-loader!../../data/recent_deaths.csv')
+          // let records = require("../../data/deaths.json")
+          // let records = require("../../data/deaths.json")
           var geojson = {features: [],  type: 'FeatureCollection'}
           for (let [index, record] of records.entries()) {
             // for dupe locations, move them slightly

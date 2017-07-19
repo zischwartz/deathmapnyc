@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 
 // only track in production
 import ReactGA from 'react-ga'
-ReactGA.initialize('UA-90773575-1');
+ReactGA.initialize('UA-69299673-1');
 
 import App from './components/App';
 
