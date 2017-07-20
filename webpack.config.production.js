@@ -28,8 +28,8 @@ module.exports = {
         use: [ 'style-loader', 'css-loader']
       },
       {
-        // test: /\.png$/,
-        test: /\.(png|ico|jpg)$/,
+        test: /\.png$/,
+        // test: /\.(png|ico|jpg)$/,
         use: ["file-loader"]
       }
     ]

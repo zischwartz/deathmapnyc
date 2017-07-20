@@ -7,8 +7,9 @@
     "jupyter": "docker run -it  -v $PWD/data:/home/jovyan/work --rm -p 8888:8888 jupyter/datascience-notebook",
     "start": "webpack-dev-server",
     "prebuild": "rimraf dist",
-    "build": "cross-env NODE_ENV=production webpack -p --config webpack.config.production.js",
+    "build": "cross-env NODE_ENV=production webpack -p --config webpack.config.production.js && echo \"deathmapnyc.com\" > dist/CNAME",
     "deploy-gh-pages": "git subtree push --prefix dist origin gh-pages",
+    "deploy-gh-pages-force": "git push origin `git subtree split --prefix dist master`:gh-pages --force",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
