@@ -61,8 +61,10 @@ class Map extends React.Component {
           let p = e.features[0].properties
           // console.log(p)
           // console.log(d)
+          let kind_map = {'v': 'Motor Vehicle', 'c': 'Criminal', 'b': 'By Police', 'w': 'At Work'}
+          let html = new Date(p['date']).toDateString() + (p['description'] ? '<br/>'+p['description']: '')+ '<br/>'+ kind_map[p['kind']]
           popup.setLngLat(e.features[0].geometry.coordinates)
-              .setHTML(new Date(p['date']).toDateString() + (p['description'] ? '<br/>'+p['description']: '') )
+              .setHTML(html)
               .addTo(map);
       });
 
@@ -79,18 +81,20 @@ class Map extends React.Component {
   }
   render() {
     // console.log(this.get_active_kinds())
-    // let kinds =
-    // ["in", "k", ].concat(kinds)
     if (this.mb_map){
       this.mb_map.setFilter('point', ['in', 'kind'].concat(this.get_active_kinds()) )
     }
 
     return (<div>
               <nav id='filter-group' className='filter-group'>
-                <input type="checkbox" id="vehicle" checked={this.state.vehicle} onChange={e=>this.flip('vehicle')} /><label htmlFor="vehicle">Vehicle</label>
-                <input type="checkbox" id="criminal" checked={this.state.criminal} onChange={e=>this.flip('criminal')} /><label htmlFor="criminal">Criminal</label>
-                <input type="checkbox" id="by_police" checked={this.state.by_police} onChange={e=>this.flip('by_police')} /><label htmlFor="by_police">By Police</label>
-                <input type="checkbox" id="work" checked={this.state.work} onChange={e=>this.flip('work')} /><label htmlFor="work">Work</label>
+                <input type="checkbox" id="vehicle" checked={this.state.vehicle} onChange={e=>this.flip('vehicle')} />
+                <label htmlFor="vehicle">Vehicle</label>
+                <input type="checkbox" id="criminal" checked={this.state.criminal} onChange={e=>this.flip('criminal')} />
+                <label htmlFor="criminal">Criminal</label>
+                <input type="checkbox" id="by_police" checked={this.state.by_police} onChange={e=>this.flip('by_police')} />
+                <label htmlFor="by_police">By Police</label>
+                <input type="checkbox" id="work" checked={this.state.work} onChange={e=>this.flip('work')} />
+                <label htmlFor="work">At Work</label>
               </nav>
             <div ref="mapboxMap" id="map"/></div>);
   }
@@ -109,7 +113,6 @@ function load_data(map) {
   return new Promise(function(resolve, reject){
         require.ensure([], function() {
           let records = require('dsv-loader!../../data/recent_deaths.csv')
-          // let records = require("../../data/deaths.json")
           // let records = require("../../data/deaths.json")
           var geojson = {features: [],  type: 'FeatureCollection'}
           for (let [index, record] of records.entries()) {
@@ -175,7 +178,10 @@ function make_map(container){
           // style: 'mapbox://styles/mapbox/streets-v9',
           zoom: 11.5,
           minZoom: 9,
-          maxZoom: 15,
+          maxZoom: 18,
+          attributionControl: false, // only shows up on small screens and isn't clickable anyway?!
+          // maxZoom: 15,
+          hash: true,
           center:[-73.97661209106445,40.714736512395284],
           // center:[-99, 40],
           maxBounds: bounds, // Sets bounds as max
@@ -267,49 +273,3 @@ function make_border_layer(){
   }
   return s
 }
-
-
-
-
-// // same as above layer creation , just need a different one for hover/click
-// let hover_layer = point_layer_obj()
-// hover_layer['paint']['circle-color']= 'rgba(100, 180, 200, 0.9)'
-// hover_layer['id'] =  'point-hover'
-// hover_layer['filter'] =  ["==", 'full_place', "NONE"]
-// map.addLayer(hover_layer)
-
-// function setup_popups(map){
-//   var popup = new mapboxgl.Popup({closeButton: false,  closeOnClick: false })
-//   map.on('mousedown', function(e) {
-//     if (!e.point){return}
-//     // console.log(e.lngLat)
-//     var features = map.queryRenderedFeatures(e.point, { layers: ['point'] });
-//     if (!features.length) {
-//         popup.remove();
-//         return;
-//     }
-//     // XXX
-//     // this is a hack because queryRenderedFeatures returns too many results when data driven circle radius
-//     // see https://github.com/mapbox/mapbox-gl-js/issues/3604
-//     // not performant enough for on mousemove, had to add lat lng because of this
-//     features.sort( (a, b)=>{
-//       return getDistance(e.lngLat, {lat:a.properties.lat, lng:a.properties.lng})-getDistance(e.lngLat, {lat:b.properties.lat, lng:b.properties.lng})
-//     })
-//     // just take the first one, i.e. closest to click
-//     var feature = features[0];
-//     // unless it's already selected, then pick the next closest
-//     if (feature.properties.full_place == map.getFilter('point-hover')[2] && features.length > 1)
-//     {
-//       feature = features[1]
-//     }
-//     map.setFilter('point-hover', ["==", 'full_place', feature.properties.full_place])
-//     // Populate the popup and set its coordinates
-//     // based on the feature found.
-//     let props = feature.properties
-//     let min = props.estimate_low ? `Low Estimate: ${props.estimate_low.toLocaleString()}<br/>` : ''
-//     let source = props.source && props.source.indexOf('http:') ==0 ? `<a href="${props.source}">Source</a><br/>`:''
-//     popup.setLngLat(feature.geometry.coordinates)
-//         .setHTML(`<strong>${props.place}</strong><br/>High Estimate: ${props.estimate_high.toLocaleString()}<br/>${min}${source}`
-//         ).addTo(map);
-//     }) // end on mousedown
-// }
