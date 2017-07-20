@@ -7,6 +7,11 @@ import Map from './map.js'
 // console.log("Hello world")
 
 let skull_url = require("../../img/skull_d2.png")
+// let skull_url = require("../../img/skull_d2.png")
+require("file-loader?name=image.jpg!../../img/image.jpg");
+require("file-loader?name=favicon.ico!../../img/favicon.ico");
+// => picture.png
+
 // console.log(skull_url)
 
 class App extends React.Component {
