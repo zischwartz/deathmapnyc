@@ -120,3 +120,12 @@ from https://www.mapbox.com/mapbox-gl-js/example/filter-markers/
     content: '✔';
     margin-right: 5px;
 }
+
+#filter-kind-group {
+  bottom: 50px;
+}
+
+#all-years-group {
+    bottom:10px;
+    max-width: 120px;
+}

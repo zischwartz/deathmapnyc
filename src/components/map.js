@@ -22,28 +22,36 @@ var bounds = [
 class Map extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {vehicle:true, criminal:true, by_police:true, work: true}
+    // this is dumb, what i really want is a set for active_kinds
+    this.state = {all_years: false, active_kinds: {vehicle:true, crime:true, by_police:true, work: true} }
   }
   get_active_kinds(){
     let res = []
-    for (let [k,v] of Object.entries(this.state)){  if (v) { res.push(k[0])}  }
+    for (let [k,v] of Object.entries(this.state.active_kinds)){  if (v) { res.push(k[0])}  }
     return res
   }
-  flip(k){
-    let obj = {[k]:!this.state[k]}
-    this.setState(obj)
+  flip_active_kind(k){
+    this.state.active_kinds[k] = !this.state.active_kinds[k]
+    this.setState(this.state)
+  }
+  flip_all_years(){
+    this.setState({all_years:!this.state.all_years})
   }
   componentDidMount(){
     if (!mapboxgl.supported()) {
       alert('Your browser does not support Mapbox GL');return;
     }
+
+    // can set which load_data to use here?
     // make_map is a helper below
-    make_map(this.refs.mapboxMap).then(load_data).then(([geojson, map])=> {
+    let f_to_load_data = !this.state.all_years ? load_data : load_all_years_data
+    make_map(this.refs.mapboxMap).then(f_to_load_data).then(([geojson, map])=> {
       window.map = map //debug
       this.mb_map = map
       map.addSource('data', {
         type: 'geojson',
-        data: geojson, // cluster: true, // https://www.mapbox.com/mapbox-gl-js/example/cluster/ // clusterRadius: 25 // default is 50
+        // cluster: true, // https://www.mapbox.com/mapbox-gl-js/example/cluster/ // clusterRadius: 25 // default is 50
+        data: geojson,
       })
       let image = new Image(40,53)
       image.src = skull_url
@@ -59,9 +67,7 @@ class Map extends React.Component {
           // Populate the popup and set its coordinates
           // based on the feature found.
           let p = e.features[0].properties
-          // console.log(p)
-          // console.log(d)
-          let kind_map = {'v': 'Motor Vehicle', 'c': 'Criminal', 'b': 'By Police', 'w': 'At Work'}
+          let kind_map = {'v': 'Motor Vehicle', 'c': 'Crime', 'b': 'By Police', 'w': 'At Work'}
           let html = new Date(p['date']).toDateString() + (p['description'] ? '<br/>'+p['description']: '')+ '<br/>'+ kind_map[p['kind']]
           popup.setLngLat(e.features[0].geometry.coordinates)
               .setHTML(html)
@@ -84,16 +90,21 @@ class Map extends React.Component {
     if (this.mb_map){
       this.mb_map.setFilter('point', ['in', 'kind'].concat(this.get_active_kinds()) )
     }
-
+    let active_kinds = this.state.active_kinds
+    // console.log(active_kinds)
     return (<div>
-              <nav id='filter-group' className='filter-group'>
-                <input type="checkbox" id="vehicle" checked={this.state.vehicle} onChange={e=>this.flip('vehicle')} />
+              <nav id='all-years-group' className='filter-group'>
+                <input type="checkbox" id="all_years" checked={this.state.all_years} onChange={e=>this.flip_all_years()} />
+                <label htmlFor="all_years">Show All Years</label>
+              </nav>
+              <nav id='filter-kind-group' className='filter-group'>
+                <input type="checkbox" id="vehicle" checked={active_kinds.vehicle} onChange={e=>this.flip_active_kind('vehicle')} />
                 <label htmlFor="vehicle">Vehicle</label>
-                <input type="checkbox" id="criminal" checked={this.state.criminal} onChange={e=>this.flip('criminal')} />
-                <label htmlFor="criminal">Criminal</label>
-                <input type="checkbox" id="by_police" checked={this.state.by_police} onChange={e=>this.flip('by_police')} />
+                <input type="checkbox" id="crime" checked={active_kinds.crime} onChange={e=>this.flip_active_kind('crime')} />
+                <label htmlFor="crime">Crime</label>
+                <input type="checkbox" id="by_police" checked={active_kinds.by_police} onChange={e=>this.flip_active_kind('by_police')} />
                 <label htmlFor="by_police">By Police</label>
-                <input type="checkbox" id="work" checked={this.state.work} onChange={e=>this.flip('work')} />
+                <input type="checkbox" id="work" checked={active_kinds.work} onChange={e=>this.flip_active_kind('work')} />
                 <label htmlFor="work">At Work</label>
               </nav>
             <div ref="mapboxMap" id="map"/></div>);
@@ -108,31 +119,50 @@ export default Map;
 
 // should pass data in too.
 
+
+
 function load_data(map) {
-  let counts = {}
   return new Promise(function(resolve, reject){
         require.ensure([], function() {
           let records = require('dsv-loader!../../data/recent_deaths.csv')
-          // let records = require("../../data/deaths.json")
-          var geojson = {features: [],  type: 'FeatureCollection'}
-          for (let [index, record] of records.entries()) {
-            // for dupe locations, move them slightly
-            let loc_string = `${record.lng} ${record.lat}`
-            if (counts[loc_string]){
-              counts[loc_string]+=1
-              record = adjust_location(record, counts[loc_string])
-            }
-            else { counts[loc_string]=1 }
-            // and this is where we'd put a multiple record for same loc
-            let f = create_feature(record.lng, record.lat, record)
-            geojson.features.push(f)
-          }
+          let geojson = get_geo_from_records(records)
           resolve([geojson, map])
-
-
       }) // end ensure
   }) // end promise, which is returned
 } // end load data
+
+function load_all_years_data(map) {
+  return new Promise(function(resolve, reject){
+        require.ensure([], function() {
+          let records = require('dsv-loader!../../data/all_deaths.csv')
+          let geojson = get_geo_from_records(records)
+          resolve([geojson, map])
+      }) // end ensure
+  }) // end promise, which is returned
+} // end load data
+
+// helper for above
+function get_geo_from_records(records){
+  let geojson = {features: [],  type: 'FeatureCollection'}
+  let counts = {}
+  for (let [index, record] of records.entries()) {
+    // for dupe locations, move them slightly
+    // todo, make this matching slightly fuzzy,
+    /// and add more variations
+    let loc_string = `${record.lng} ${record.lat}`
+    if (counts[loc_string]){
+      counts[loc_string]+=1
+      record = adjust_location(record, counts[loc_string])
+    }
+    else { counts[loc_string]=1 }
+    // and this is where we'd put a multiple record for same loc
+    let f = create_feature(record.lng, record.lat, record)
+    geojson.features.push(f)
+  }
+  return geojson
+}
+
+
 
 
 // let records = [{lng:-73.8232488, lat:40.76131858}, {lng:-73.8232488, lat:40.76131858},{lng:-73.8232488, lat:40.76131858},{lng:-73.8232488, lat:40.76131858},{lng:-73.8232488, lat:40.76131858},{lng:-73.8232488, lat:40.76131858},{lng:-73.8232488, lat:40.76131858}]
@@ -254,7 +284,8 @@ function toner_layer_style(){
   return s
 } // end add tonerlayer
 
-
+// NOT USED, I can't figure out how to easily make a concave layer,
+// though I'm sure it could be achieved by pre processing the geojson
 // console.log(nyc_simpler)
 function make_border_layer(){
   let s = {
