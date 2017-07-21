@@ -23,7 +23,7 @@ class Map extends React.Component {
   constructor(props) {
     super(props)
     // this is dumb, what i really want is a set for active_kinds
-    this.state = {all_years: false, active_kinds: {vehicle:true, crime:true, by_police:true, work: true} }
+    this.state = {all_years: false, all_years_loaded:false, active_kinds: {vehicle:true, crime:true, by_police:true, work: true} }
   }
   get_active_kinds(){
     let res = []
@@ -85,8 +85,21 @@ class Map extends React.Component {
       // setTimeout(()=> map.zoomIn() , 500)
     })
   }
+  shouldComponentUpdate(nextProps, nextState) {
+    // do we need to add the all years source to the map ?
+    // we'll filter years otherwise maybe
+    if (nextState.all_years && !this.state.all_years_loaded ){
+      load_all_years_data().then(data=> this.mb_map.getSource('data').setData(data[0]) )
+      // even though they're not yet, so this should prevent multiple loads
+      this.setState({all_years_loaded:true})
+    }
+    // always return true to re render the comp
+    //which doesn't actually re-render the map
+    return true
+  }
   render() {
     // console.log(this.get_active_kinds())
+    // TODO now
     if (this.mb_map){
       this.mb_map.setFilter('point', ['in', 'kind'].concat(this.get_active_kinds()) )
     }
@@ -206,13 +219,13 @@ function make_map(container){
     let map = new mapboxgl.Map({
           container: container, // can be element or element id
           // style: 'mapbox://styles/mapbox/streets-v9',
-          zoom: 11.5,
+          zoom: 11,
           minZoom: 9,
           maxZoom: 18,
           attributionControl: false, // only shows up on small screens and isn't clickable anyway?!
           // maxZoom: 15,
           hash: true,
-          center:[-73.97661209106445,40.714736512395284],
+          center:[-73.9,40.7147],
           // center:[-99, 40],
           maxBounds: bounds, // Sets bounds as max
           // style: 'mapbox://styles/mapbox/dark-v9', //hosted style id
