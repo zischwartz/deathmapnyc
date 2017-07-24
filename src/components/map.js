@@ -22,7 +22,8 @@ var bounds = [
 class Map extends React.Component {
   constructor(props) {
     super(props)
-    // this is dumb, what i really want is a set for active_kinds
+    // this is dumb, what i really want is a set for active_kinds TODO
+    // let active_kinds = new Set(["vehicle", "crime", "by_police", "work"])
     this.state = {all_years: false, all_years_loaded:false, active_kinds: {vehicle:true, crime:true, by_police:true, work: true} }
   }
   get_active_kinds(){
@@ -99,20 +100,12 @@ class Map extends React.Component {
     return true
   }
   render() {
-    // console.log(this.get_active_kinds())
-    // TODO add year filtering based on this.state.all_years
-    let current_filter = [
-      // todo
-      'all',
-      ['all'],
-      // ['in', ] durr, need year, add it on load TODO
-      ['in', 'kind'].concat(this.get_active_kinds())
-    ]
-    if (this.mb_map){
-      this.mb_map.setFilter('point', current_filter )
-    }
+    let year_filter = this.state.all_years ? ['all'] : ['in', 'year', 2015, 2016]
+    // filter by kind and by year
+    let current_filter = [ 'all', year_filter, ['in', 'kind'].concat(this.get_active_kinds()) ]
+    // only actually apply the filter if the map has been instantiated
+    if (this.mb_map){  this.mb_map.setFilter('point', current_filter )  }
     let active_kinds = this.state.active_kinds
-    // console.log(active_kinds)
     return (<div>
               <nav id='all-years-group' className='filter-group'>
                 <input type="checkbox" id="all_years" checked={this.state.all_years} onChange={e=>this.flip_all_years()} />
@@ -167,16 +160,21 @@ function get_geo_from_records(records){
   let geojson = {features: [],  type: 'FeatureCollection'}
   let counts = {}
   for (let [index, record] of records.entries()) {
+    // this normalizes and rounds, prevent occlusion of close ones, as opposed to using the clustering stuff
+    record.lat = parseFloat(record.lat)
+    record.lng = parseFloat(record.lng)
     // for dupe locations, move them slightly
-    // todo, make this matching slightly fuzzy,
-    /// and add more variations
-    let loc_string = `${record.lng} ${record.lat}`
+    let loc_string = `${record.lat.toFixed(5)} ${record.lng.toFixed(5)}`
     if (counts[loc_string]){
       counts[loc_string]+=1
+      // pass the record and the count for that loc, get back and adjusted rec
       record = adjust_location(record, counts[loc_string])
     }
     else { counts[loc_string]=1 }
-    // and this is where we'd put a multiple record for same loc
+    record.date = new Date(record.date)
+    // for filtering later
+    record.year = record.date.getFullYear()
+    // create the feature, pass the whole record for props
     let f = create_feature(record.lng, record.lat, record)
     geojson.features.push(f)
   }
@@ -194,26 +192,30 @@ function get_geo_from_records(records){
 // could just leave icon-allow-overlap false, but this shows magnitude
 function adjust_location(record, count){
   if (count==2) {
-    record["lng"] -= 0.0005
-    record["lat"] += 0.0005
+    record["lng"] -= 0.0002
+    record["lat"] += 0.0002
   }
-  if (count==3) {
-    record["lng"] -= 0.0005
-    record["lat"] -= 0.0005
+  else if (count==3) {
+    record["lng"] -= 0.0002
+    record["lat"] -= 0.0002
   }
-  if (count==4) {
-    record["lng"] += 0.0005
-    record["lat"] += 0.0005
+  else if (count==4) {
+    record["lng"] += 0.0002
+    record["lat"] += 0.0002
   }
-  if (count==5) {
-    record["lng"] += 0.0005
-    record["lat"] -= 0.0005
+  else if (count==5) {
+    record["lng"] += 0.0002
+    record["lat"] -= 0.0002
   }
-  if (count==6) {
-    record["lng"] -= 0.0008
+  else if (count==6) {
+    record["lng"] -= 0.0003
   }
-  if (count==7) {
-    record["lng"] += 0.0008
+  else if (count==7) {
+    record["lng"] += 0.0003
+  }
+  else if (count > 7){
+    record["lng"] += count%2 ? 0.000035*count : -0.000035*count
+    record["lat"] += count%3 ? 0.000035*count : -0.000035*count
   }
   return record
 }

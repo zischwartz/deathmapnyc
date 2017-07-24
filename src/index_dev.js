@@ -8,7 +8,6 @@ import App from './components/App'
 document.title = '*DEV*👹'+document.title
 
 const render = () => {
-  console.log(Document.title)
   ReactDOM.render(
     <AppContainer>
       <App/>
