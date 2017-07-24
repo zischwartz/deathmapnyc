@@ -12,7 +12,7 @@ require("file-loader?name=image.jpg!../../img/image.jpg");
 require("file-loader?name=favicon.ico!../../img/favicon.ico");
 // => picture.png
 
-// console.log(skull_url)
+console.log(skull_url)
 
 class App extends React.Component {
   constructor(props) {

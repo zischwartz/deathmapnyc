@@ -61,6 +61,7 @@ class Map extends React.Component {
            closeButton: false,
            closeOnClick: false
       })
+      // XXX todo, fix, make click/tap based
       map.on('mouseenter', 'point', function(e) {
           // Change the cursor style as a UI indicator.
           map.getCanvas().style.cursor = 'pointer';
@@ -99,9 +100,16 @@ class Map extends React.Component {
   }
   render() {
     // console.log(this.get_active_kinds())
-    // TODO now
+    // TODO add year filtering based on this.state.all_years
+    let current_filter = [
+      // todo
+      'all',
+      ['all'],
+      // ['in', ] durr, need year, add it on load TODO
+      ['in', 'kind'].concat(this.get_active_kinds())
+    ]
     if (this.mb_map){
-      this.mb_map.setFilter('point', ['in', 'kind'].concat(this.get_active_kinds()) )
+      this.mb_map.setFilter('point', current_filter )
     }
     let active_kinds = this.state.active_kinds
     // console.log(active_kinds)
