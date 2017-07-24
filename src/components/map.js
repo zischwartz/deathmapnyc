@@ -58,12 +58,14 @@ class Map extends React.Component {
       image.src = skull_url
       map.addImage('skull_d2_image', image, {width: 40, height: 53});
       map.addLayer(point_layer_obj())
-      var popup = new mapboxgl.Popup({
-           closeButton: false,
-           closeOnClick: false
-      })
-      // XXX todo, fix, make click/tap based
+
       map.on('mouseenter', 'point', function(e) {
+        map.getCanvas().style.cursor = 'pointer';
+      })
+
+      map.on('click', 'point', function(e) {
+          let popup = new mapboxgl.Popup() //  closeButton: false,  closeOnClick: false
+
           // Change the cursor style as a UI indicator.
           map.getCanvas().style.cursor = 'pointer';
           // Populate the popup and set its coordinates
@@ -78,9 +80,7 @@ class Map extends React.Component {
 
       map.on('mouseleave', 'point', function() {
           map.getCanvas().style.cursor = '';
-          popup.remove();
       });
-  // });
 
       map.addControl(new mapboxgl.NavigationControl());
       map.addControl(new mapboxgl.GeolocateControl({  positionOptions: {   enableHighAccuracy: true }}))
