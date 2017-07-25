@@ -131,9 +131,6 @@ export default Map;
 // Helpers !
 // -------------------
 
-// should pass data in too.
-
-
 
 function load_data(map) {
   return new Promise(function(resolve, reject){
@@ -191,31 +188,24 @@ function get_geo_from_records(records){
 // this is the "jitter" thing from the first version, but better
 // could just leave icon-allow-overlap false, but this shows magnitude
 function adjust_location(record, count){
-  if (count==2) {
-    record["lng"] -= 0.0002
-    record["lat"] += 0.0002
-  }
-  else if (count==3) {
-    record["lng"] -= 0.0002
-    record["lat"] -= 0.0002
-  }
-  else if (count==4) {
-    record["lng"] += 0.0002
-    record["lat"] += 0.0002
-  }
-  else if (count==5) {
-    record["lng"] += 0.0002
-    record["lat"] -= 0.0002
-  }
-  else if (count==6) {
-    record["lng"] -= 0.0003
-  }
-  else if (count==7) {
-    record["lng"] += 0.0003
-  }
-  else if (count > 7){
-    record["lng"] += count%2 ? 0.000035*count : -0.000035*count
-    record["lat"] += count%3 ? 0.000035*count : -0.000035*count
+  let offset = 0.000035
+  switch (count%4){
+    case 0:
+      record["lng"] += -offset*count
+      record["lat"] +=  offset*count
+      break;
+    case 1:
+      record["lng"] +=  offset*count
+      record["lat"] += -offset*count
+      break;
+    case 2:
+      record["lng"] +=  offset*count
+      record["lat"] +=  offset*count
+      break;
+    case 3:
+      record["lng"] += -offset*count
+      record["lat"] += -offset*count
+      break;
   }
   return record
 }
@@ -231,7 +221,7 @@ function make_map(container){
           // style: 'mapbox://styles/mapbox/streets-v9',
           zoom: 11,
           minZoom: 9,
-          maxZoom: 18,
+          maxZoom: 17,
           attributionControl: false, // only shows up on small screens and isn't clickable anyway?!
           // maxZoom: 15,
           hash: true,
