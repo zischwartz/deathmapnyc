@@ -28,9 +28,9 @@ class App extends React.Component {
     // style={p_style}
     return <div id="app">
       <div id="info">
-        <img src={skull_url} style={ {'float':'left', marginTop:-5, width: 20, height:27} }/>
+        <img src={skull_url} style={ {'float':'left', marginTop:-3, width: 20, height:27} }/>
         <div className='title'>
-          <strong>Death in New York City</strong>
+          <strong>Death Map NYC</strong>
           <a className='moreinfo' href="#" onClick={()=> this.setState({show_moreinfo:!this.state.show_moreinfo})}>{label}</a>
         </div>
         <p style={p_style}>This is a map of deaths that occurred in New York City in 2015 and 2016 based on available data.</p>
