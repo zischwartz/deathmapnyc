@@ -28,7 +28,7 @@ class App extends React.Component {
     // style={p_style}
     return <div id="app">
       <div id="info">
-        <img src={skull_url} style={ {'float':'left', marginTop:-3, width: 20, height:27} }/>
+        <img src={skull_url} style={ {'float':'left', marginTop:-3, marginLeft: -5, marginRight:4, width: 20, height:27} }/>
         <div className='title'>
           <strong>Death Map NYC</strong>
           <a className='moreinfo' href="#" onClick={()=> this.setState({show_moreinfo:!this.state.show_moreinfo})}>{label}</a>
