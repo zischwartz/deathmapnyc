@@ -8,7 +8,7 @@ import Map from './map.js'
 
 let skull_url = require("../../img/skull_d2.png")
 // let skull_url = require("../../img/skull_d2.png")
-require("file-loader?name=image.jpg!../../img/deathmapnyc.jpg");
+require("file-loader?name=deathmapnyc.jpg!../../img/deathmapnyc.jpg");
 require("file-loader?name=favicon.ico!../../img/favicon.ico");
 // => picture.png
 
@@ -23,6 +23,8 @@ class App extends React.Component {
   render(){
     let p_style = this.state.show_moreinfo ? {display:"block"} : {display:"none"}
     let label = this.state.show_moreinfo ? 'Less': 'More info'
+    let readme = "https://github.com/zischwartz/deathmapnyc#death-map-nyc"
+    let limitations = "https://github.com/zischwartz/deathmapnyc#limitations--caveats"
     // style={p_style}
     return <div id="app">
       <div id="info">
@@ -31,9 +33,9 @@ class App extends React.Component {
           <strong>Death in New York City</strong>
           <a className='moreinfo' href="#" onClick={()=> this.setState({show_moreinfo:!this.state.show_moreinfo})}>{label}</a>
         </div>
-        <p style={p_style}>This is a map of deaths that occurred in New York City in 2015 and 2016. It's incomplete and imperfect.</p>
+        <p style={p_style}>This is a map of deaths that occurred in New York City in 2015 and 2016 based on available data.</p>
         <p style={p_style}>For some categories/data-sources there's data going as far back as 2006. Check the "Show All Years" button to see that.</p>
-        <p style={p_style}>For more information, see limitations or the github repo.</p>
+        <p style={p_style}><a href={readme}>More information</a> & <a href={limitations}>limitations</a></p>
       </div>
       <Map/>
     </div>

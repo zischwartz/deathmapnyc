@@ -1,5 +1,5 @@
 # Death Map NYC
-This is the source code for [deathmapnyc.com](http://deathmapnyc.com), a map of deaths that occurred in New York City in 2015 and 2016. It's incomplete and imperfect. For some categories/data-sources there's data going as far back as 2006. Check the "Show All Years" button to see that.
+This is the source code for [deathmapnyc.com](http://deathmapnyc.com), a map of deaths that occurred in New York City in 2015 and 2016 based on available data. For some categories/data-sources there's data going as far back as 2006. Check the "Show All Years" button to see that.
 
 ### Data Sources
 
@@ -23,11 +23,13 @@ To get started:
 git clone git@github.com:zischwartz/deathmapnyc.git && cd deathmapnyc
 # install deps
 npm install
-# start development web server
+# start development webpack dev server
 npm start
+#
+# open http://localhost:3333/
 ```
 
-If you have docker installed, you can easily run the [jupyter](http://jupyter.org/about.html) [notebook](https://github.com/zischwartz/deathmapnyc/blob/master/data/processs.ipynb) that collects and processes the data.
+If you have docker ([docker for mac](https://www.docker.com/docker-mac)) installed , you can easily run the [jupyter](http://jupyter.org/about.html) [notebook](https://github.com/zischwartz/deathmapnyc/blob/master/data/processs.ipynb) that collects and processes the data.
 
 ```bash
 npm run jupyter
